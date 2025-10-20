@@ -1,0 +1,20 @@
+-- Fix security issue: Add search_path to update_updated_at function
+DROP FUNCTION IF EXISTS public.update_updated_at() CASCADE;
+
+CREATE OR REPLACE FUNCTION public.update_updated_at()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$;
+
+-- Recreate the trigger for food_entries
+CREATE TRIGGER update_food_entries_updated_at
+  BEFORE UPDATE ON public.food_entries
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at();

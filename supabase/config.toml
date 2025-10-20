@@ -1,0 +1,4 @@
+project_id = "aqryruyadxrpzhqkdqpg"
+
+[functions.estimate-calories]
+verify_jwt = false
